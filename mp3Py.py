@@ -264,8 +264,7 @@ def main():
         os.mkdir(path + '\\tracks')
 
     # Iterate through files in tracks directory #
-    [ tracks.append(str(file.name)) for file in os.scandir(path + '\\tracks') \
-    if str(file.name).endswith(track_type) ] 
+    [ tracks.append(str(file.name)) for file in os.scandir(path + '\\tracks') if str(file.name).endswith(track_type) ] 
     
     # Display the menu #
     Display()

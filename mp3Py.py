@@ -259,7 +259,7 @@ def main():
         cmd = quote('clear')
 
     # If tracks dir does not exist #
-    if not os.isdir(path + '\\tracks'):
+    if not os.path.isdir(path + '\\tracks'):
         # Create tracks dir #
         os.mkdir(path + '\\tracks')
 

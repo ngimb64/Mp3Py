@@ -1,4 +1,5 @@
-    # Built-in Modules #
+# Built-in Modules #
+#####################
 import os, sys
 from re import match
 from shlex import quote
@@ -6,6 +7,7 @@ from time import sleep
 from threading import Thread
 
 # Third-party Modules #
+########################
 from pyfiglet import Figlet
 from pygame import mixer
 from pynput.keyboard import Key, Listener
@@ -23,7 +25,9 @@ from pynput.keyboard import Key, Listener
 ############################################################################
 
 # Globals #
+############################################################################
 pause, nxt, vol, exit = False, False, False, False
+############################################################################
 
 '''
 ############################################################################

@@ -18,7 +18,7 @@ def main():
     path = './packages.txt'
 
     # If the file exists and is accessable #
-    if os.isfile(path) and os.access(path, os.R_OK):
+    if os.path.isfile(path) and os.access(path, os.R_OK):
         try:
             # Open file & iterate line by line #
             with open('packages.txt', 'r') as file:

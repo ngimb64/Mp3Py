@@ -1,3 +1,6 @@
 # Ignore media files in tracks directory #
 tracks/*
 !tracks/.keep
+
+# Ingore Pycharm files #
+.idea/

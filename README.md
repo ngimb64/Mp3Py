@@ -1,6 +1,8 @@
+# Mp3Py
+![alt text](https://github.com/ngimb64/Mp3Py/blob/main/Mp3Py.png?raw=true)
+
 ## Prereqs
-> To make sure this program runs as designed at least Python 3.8 should be installed.
-> This project uses external libraries, which need to be installed via provided setup script.
+> Program runs on Windows, written in Python 3.8
 
 ## Installation
 > Enter Python downloads in a search engine and obtain at least version 3.8 from the official website. 

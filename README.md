@@ -2,7 +2,7 @@
 ![alt text](https://github.com/ngimb64/Mp3Py/blob/main/Mp3Py.png?raw=true)
 
 ## Prereqs
-> Program runs on Windows, written in Python 3.8
+> Program runs on Windows and Linux, written in Python 3.8
 
 ## Installation
 > Enter Python downloads in a search engine and obtain at least version 3.8 from the official website. 

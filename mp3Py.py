@@ -11,6 +11,7 @@ from pyfiglet import Figlet
 from pygame import mixer
 from pynput.keyboard import Key, Listener
 
+##################
 # Function Index #
 ########################################################################################################################
 # PauseTrack(cmd) - Pauses the track until enter is hit to continue.

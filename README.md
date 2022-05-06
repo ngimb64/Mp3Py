@@ -19,7 +19,7 @@
 
 ## How to use
 - Open up Command Prompt (CMD)
-- Enter the directory containing program & create folder name tracks
+- Traverse to the directory containing program & create folder name tracks
 - Place songs to be played in the tracks folder
 - Execute program
-- Check out the control menu and use the arrow keys accordingly
+- Check out the control menu and use the arrow keys accordingly to control track execution

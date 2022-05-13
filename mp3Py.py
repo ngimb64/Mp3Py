@@ -11,7 +11,7 @@ from pyfiglet import Figlet
 from pygame import mixer
 from pynput.keyboard import Key, Listener
 
-
+"""
 ##################
 # Function Index #
 ########################################################################################################################
@@ -24,7 +24,7 @@ from pynput.keyboard import Key, Listener
 # Display() - Displays the key listener options.
 # main() - Gathers tracks in dir as list, displays menu, & starts threads.
 ########################################################################################################################
-
+"""
 
 # Globals #
 pause, nxt, vol, halt = False, False, False, False

@@ -4,21 +4,22 @@
 ## Prereqs
 > Program runs on Windows and Linux, written in Python 3.8
 
+## Purpose
+> This program is a command line based mp3 player that uses a listener to detect keystrokes.
+> The arrow keys are tied to this listener with static text flags used to control execution.
+
 ## Installation
 - Run the setup.py script to build a virtual environment and install all external packages in the created venv.
 
 > Example:<br>
 > python3 setup.py "venv name"
 
-- Once virtual env is built move to the Scripts directory in the environment folder just created.
-- In the Scripts directory, execute the "activate" script to activate the virtual environment.
-
-## Purpose
-> This program is a command line based mp3 player that uses a listener to detect keystrokes.
-> The arrow keys are tied to this listener with static text flags used to control execution.
+- Once virtual env is built traverse to the (Scripts-Windows or bin-Linux) directory in the environment folder just created.
+- For Windows in the Scripts directory, for execute the "activate" script to activate the virtual environment.
+- For Linux in the bin directory, run the command `source activate` to activate the virtual environment.
 
 ## How to use
-- Open up Command Prompt (CMD)
+- Open up Command Prompt or terminal
 - Traverse to the directory containing program & create folder name tracks
 - Place songs to be played in the tracks folder
 - Execute program

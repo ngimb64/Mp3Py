@@ -1,6 +1,9 @@
-# Ignore media files in tracks directory #
+# Media files in tracks directory #
 tracks/*
 !tracks/.keep
 
-# Ingore Pycharm files #
+# Pycharm files #
 .idea/
+
+# venv files #
+venv/*

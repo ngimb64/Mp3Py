@@ -1,9 +1,8 @@
 # Built-in Modules #
 import os
 import sys
+import time
 from re import match
-from shlex import quote
-from time import sleep
 from threading import Thread
 
 # Third-party Modules #
@@ -11,20 +10,22 @@ from pyfiglet import Figlet
 from pygame import mixer
 from pynput.keyboard import Key, Listener
 
+
 """
 ##################
 # Function Index #
 ########################################################################################################################
-# PauseTrack(cmd) - Pauses the track until enter is hit to continue.
-# ChangeVolume(cmd) - Re-set the tracks volume level.
-# PlayCurrentTrack(path, vol) - Plays the current track in track list.
-# PrintErr(msg, seconds) - Prints time controlled error message.
-# MediaPlayer(tracks, path) - Facilitates the media player operation.
-# OnPress(key) - Detects key strokes, setting corresponding boolean toggle.
-# Display() - Displays the key listener options.
-# main() - Gathers tracks in dir as list, displays menu, & starts threads.
+PauseTrack - Pauses the track until enter is hit to continue.
+ChangeVolume - Re-set the tracks volume level.
+PlayCurrentTrack - Plays the current track in track list.
+PrintErr - Prints time controlled error message.
+MediaPlayer - Facilitates the media player operation.
+OnPress - Detects key strokes, setting corresponding boolean toggle.
+Display - Displays the key listener options.
+main - Gathers tracks in dir as list, displays menu, & starts threads.
 ########################################################################################################################
 """
+
 
 # Globals #
 pause, nxt, vol, halt = False, False, False, False
@@ -39,7 +40,7 @@ STOP = -1
 Name:    PauseTrack
 Purpose: Pauses the track until enter is hit to continue.
 Params:  The command use to clear the screen.
-Returns: None
+Returns: Nothing
 ########################################################################################################################
 '''
 def PauseTrack(cmd: str):
@@ -75,13 +76,13 @@ def ChangeVolume(cmd: str) -> float:
         prompt = input('Enter volume 0, 1, or 0.1 to 0.9: ')
         
         # If the volume regex matches #
-        if match(r'^(?:0\.[0-9]|[01])', prompt):
+        if match(r'^(?:0\.\d|[01])', prompt):
             # Print message and set the volume #
             print(f'\nChanging volume to {prompt}\n')
             # Re-set volume to new value #
             mixer.music.set_volume(float(prompt))        
             # Sleep execution 2 seconds #
-            sleep(2)
+            time.sleep(2)
             # Clear the display #
             os.system(cmd)
             # Re-display the menu #
@@ -100,7 +101,7 @@ def ChangeVolume(cmd: str) -> float:
 Name:    PlayCurrentTrack
 Purpose: Plays the current track in track list.
 Params:  The path where the track is stored and the track volume.
-Returns: None
+Returns: Nothing
 ########################################################################################################################
 '''
 def PlayCurrentTrack(path: str, volume: float):
@@ -118,12 +119,12 @@ Name:    PrintErr
 Purpose: Prints time controlled error message.
 Params:  The error message to be printed and the number of seconds it should be displayed before clearing the screen, \
          and the command used to clear the display.
-Returns: Exits program when Ctrl+C is pressed.
+Returns: Nothing
 ########################################################################################################################
 '''
 def PrintErr(msg, seconds: int, cmd: str):
     print(f'\n* [ERROR]: {msg} *\n', file=sys.stderr)
-    sleep(seconds)
+    time.sleep(seconds)
 
     # Clear display #
     os.system(cmd)
@@ -135,8 +136,9 @@ def PrintErr(msg, seconds: int, cmd: str):
 ########################################################################################################################
 Name:    MediaPlayer
 Purpose: Facilitates the media player operation.
-Params:  A list of tracks to be played, the current working directory, and the command used for clearing the display.
-Returns: None
+Params:  A list of tracks to be played, the path to the tracks directory,i and the command used for clearing the \ 
+         display.
+Returns: Nothing
 ########################################################################################################################
 '''
 def MediaPlayer(tracks: list, path: str, cmd: str):
@@ -153,8 +155,9 @@ def MediaPlayer(tracks: list, path: str, cmd: str):
         for track in tracks:
             # Reset nxt toggle per iteration #
             nxt = False
+
             # Play the current iteration of the track list #
-            PlayCurrentTrack(f'{path}\\tracks\\{track}', volume)
+            PlayCurrentTrack(f'{path}{track}', volume)
 
             # While the track is playing and the nxt & exit toggles are False #
             while mixer.music.get_pos() != STOP and not nxt and not halt:
@@ -233,8 +236,8 @@ def OnPress(key) -> bool:
 ########################################################################################################################
 Name:    Display
 Purpose: Displays the key listener options.
-Params:  None
-Returns: None
+Params:  Nothing
+Returns: Nothing
 ########################################################################################################################
 '''
 def Display():
@@ -257,33 +260,44 @@ def Display():
 ########################################################################################################################
 Name:    main
 Purpose: Gathers tracks in dir as list, displays menu, & starts threads.
-Params:  None
-Returns: Exits program when Ctrl+C is pressed.
+Params:  Nothing
+Returns: Nothing
 ########################################################################################################################
 '''
 def main():
     global key_listener
 
+    ret = 0
     tracks = []
     # Get current working directory #
-    path = os.getcwd()
-    # Set tuple of audio file extension types #
+    cwd = os.getcwd()
+    # If the OS is Windows #
+    if os.name == 'nt':
+        track_path = f'{cwd}\\tracks\\'
+    # If the Os is Linux #
+    else:
+        track_path = f'{cwd}/tracks/'
+
+    # Set tuple of audio file extension types and command syntax #
     track_type = ('.mp3', '.mp4', '.wav', '.wma', '.m4a', '.flac')
+    cmds = ('cls', 'clear')
 
     # If the OS is Windows #
     if os.name == 'nt':
-        cmd = quote('cls')
+        cmd = cmds[0]
     # For other OS's #
     else:
-        cmd = quote('clear')
+        cmd = cmds[1]
 
     # If tracks dir does not exist #
-    if not os.path.isdir(f'{path}\\tracks'):
+    if not os.path.isdir(track_path):
         # Create tracks dir #
-        os.mkdir(f'{path}\\tracks')
+        os.mkdir(track_path)
+        PrintErr('tracks dir was missing but now exists, drag songs in the dir and restart program', 2, cmd)
+        sys.exit(2)
 
     # Iterate through files in tracks directory #
-    [tracks.append(str(file.name)) for file in os.scandir(f'{path}\\tracks') if str(file.name).endswith(track_type)]
+    [tracks.append(str(file.name)) for file in os.scandir(track_path) if str(file.name).endswith(track_type)]
 
     # Clear the display #
     os.system(cmd)
@@ -294,7 +308,7 @@ def main():
     # Create the keystroke listener thread #
     key_listener = Listener(on_press=OnPress)
     # Create the media player thread #
-    player = Thread(target=MediaPlayer, args=(tracks, path, cmd))
+    player = Thread(target=MediaPlayer, args=(tracks, track_path, cmd))
 
     try:
         # Start and join the threads #
@@ -306,9 +320,11 @@ def main():
     # If ctrl + c detected #
     except KeyboardInterrupt:
         print('\nCtrl + C detected .. exiting')
+
     # If unknown exception occurs #
     except Exception as err:
-        PrintErr(err, 4, cmd)
+        PrintErr(f'Unknown exception occurred {err}', 4, cmd)
+        ret = 1
 
     finally:
         # If the keystroke listener thread is alive #
@@ -316,6 +332,9 @@ def main():
             # Terminate the thread #
             key_listener.stop()
 
+    sys.exit(ret)
+
 
 if __name__ == '__main__':
+
     main()

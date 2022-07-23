@@ -1,4 +1,5 @@
 # Mp3Py
+![alt text](https://github.com/ngimb64/Mp3Py/blob/main/mp3Py.png?raw=true)
 ![alt text](https://github.com/ngimb64/Mp3Py/blob/main/Mp3Py.png?raw=true)
 
 ## Prereqs

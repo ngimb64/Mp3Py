@@ -1,6 +1,6 @@
 # Mp3Py
 ![alt text](https://github.com/ngimb64/Mp3Py/blob/main/mp3_Py.png?raw=true)
-![alt text](https://github.com/ngimb64/Mp3Py/blob/main/Mp3Py.png?raw=true)
+![alt text](https://github.com/ngimb64/Mp3Py/blob/main/mp3Py.png?raw=true)
 
 &#9745;&#65039; Bandit verified<br>
 &#9745;&#65039; Synk verified<br>

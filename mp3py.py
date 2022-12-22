@@ -3,7 +3,9 @@
 import os
 import sys
 import time
+from pathlib import Path
 from re import match
+from shlex import quote
 from threading import Thread
 # Third-party Modules #
 from pyfiglet import Figlet
@@ -12,18 +14,53 @@ from pynput.keyboard import Key, Listener
 
 
 # Globals #
-PAUSE, NXT, VOL, HALT = False, False, False, False
 global KEY_LISTENER
-
-# Pseudo constants #
+PAUSE, NXT, VOL, HALT = False, False, False, False
 STOP = -1
 
 
-def pause_track(cmd: str):
+def display_wrapper(func):
+    """
+    Decorator function for automatically handling cleaning up the display and re-displaying.
+
+    :param func:  The function to be decorated by this procedure.
+    """
+    def display_handler(*args, **kwargs):
+        """
+        Clears the display via shell-escaped syntax and re-displays menu after function call.
+
+        :param args:  Args passed into to the handler function.
+        :param kwargs:  Keyword args passed into to the handler function.
+        :return:  The finished decorator reference back to main.
+        """
+        # Execute the passed in function with whatever args #
+        ret = func(*args, **kwargs)
+
+        # If the OS is Windows #
+        if os.name == 'nt':
+            # Shell-escape command syntax #
+            cmd = quote('cls')
+        # If the OS is Linux #
+        else:
+            # Shell-escape command syntax #
+            cmd = quote('clear')
+
+        # Clear the display and re-display the main menu #
+        os.system(cmd)
+        display()
+
+        # If there is a return value #
+        if ret:
+            return ret
+
+    return display_handler
+
+
+@display_wrapper
+def pause_track():
     """
     Pauses the track until enter is hit to continue.
 
-    :param cmd:  Clear display command syntax.
     :return:  Nothing
     """
     # Pause the music #
@@ -33,18 +70,14 @@ def pause_track(cmd: str):
         # If enter is not detected #
         if prompt != '':
             # Call PrintError and re-iterate loop #
-            print_err('Only hit enter, no data input needed', 2, cmd)
+            print_err('Only hit enter, no data input needed', 2)
             continue
 
         break
 
-    # Clear the display #
-    os.system(cmd)
-    # Re-display the menu #
-    display()
 
-
-def change_volume(cmd: str) -> float:
+@display_wrapper
+def change_volume() -> float:
     """
     Re-set the track's volume level.
 
@@ -61,16 +94,10 @@ def change_volume(cmd: str) -> float:
             print(f'\nChanging volume to {prompt}\n')
             # Re-set volume to new value #
             mixer.music.set_volume(float(prompt))
-            # Sleep execution 2 seconds #
-            time.sleep(2)
-            # Clear the display #
-            os.system(cmd)
-            # Re-display the menu #
-            display()
             break
 
         # Print error, sleep 2 seconds, and re-iterate input loop #
-        print_err('Improper value detected .. volume unable to change', 2, cmd)
+        print_err('Improper value detected .. volume unable to change', 2)
         continue
 
     return float(prompt)
@@ -92,31 +119,25 @@ def play_current_track(path: str, volume: float):
     mixer.music.play()
 
 
-def print_err(msg, seconds: int, cmd: str):
+@display_wrapper
+def print_err(msg, seconds: int):
     """
     Prints time controlled error message via stderr.
 
     :param msg:  The error message to be displayed via stderr.
     :param seconds:  The number of seconds the message to be displayed.
-    :param cmd:  Clear display command syntax.
     :return:  Nothing
     """
     print(f'\n* [ERROR]: {msg} *\n', file=sys.stderr)
     time.sleep(seconds)
 
-    # Clear display #
-    os.system(cmd)
-    # Re-display menu #
-    display()
 
-
-def media_player(tracks: list, path: str, cmd: str):
+def media_player(tracks: list, path: Path):
     """
     Facilitates the media player operation.
 
     :param tracks:  The list of tracks to be played.
     :param path:  The path where the tracks are stored.
-    :param cmd:  Clear screen command syntax.
     :return:  Nothing
     """
     global PAUSE, NXT, VOL, HALT, KEY_LISTENER
@@ -132,9 +153,11 @@ def media_player(tracks: list, path: str, cmd: str):
         for track in tracks:
             # Reset nxt toggle per iteration #
             NXT = False
+            # Format file path based on current iteration #
+            track_file = path / track
 
             # Play the current iteration of the track list #
-            play_current_track(f'{path}{track}', volume)
+            play_current_track(str(track_file.resolve()), volume)
 
             # While the track is playing and the nxt & exit toggles are False #
             while mixer.music.get_pos() != STOP and not NXT and not HALT:
@@ -150,13 +173,13 @@ def media_player(tracks: list, path: str, cmd: str):
                 # While the vol toggle is set to True and the music is playing #
                 while VOL and mixer.music.get_pos() != STOP:
                     # Reset the volume level #
-                    volume = change_volume(cmd)
+                    volume = change_volume()
                     # Reset vol toggle #
                     VOL = False
 
                 # While the pause toggle is true #
                 while PAUSE:
-                    pause_track(cmd)
+                    pause_track()
                     break
 
                 # Reset pause toggle & continue music #
@@ -239,40 +262,24 @@ def main():
 
     ret = 0
     tracks = []
-
     # Get current working directory #
-    cwd = os.getcwd()
-    # If the OS is Windows #
-    if os.name == 'nt':
-        track_path = f'{cwd}\\tracks\\'
-    # If the Os is Linux #
-    else:
-        track_path = f'{cwd}/tracks/'
-
+    cwd = Path('.')
+    track_path = cwd / 'tracks'
     # Set tuple of audio file extension types and command syntax #
     track_type = ('.mp3', '.mp4', '.wav', '.wma', '.m4a', '.flac')
-    cmds = ('cls', 'clear')
-
-    # If the OS is Windows #
-    if os.name == 'nt':
-        cmd = cmds[0]
-    # For other OS's #
-    else:
-        cmd = cmds[1]
 
     # If tracks dir does not exist #
-    if not os.path.isdir(track_path):
+    if not track_path.exists():
         # Create tracks dir #
-        os.mkdir(track_path)
-        print_err('tracks dir was missing but now exists, drag songs in the dir and restart program'
-                  , 2, cmd)
+        track_path.mkdir()
+        # Print error and exit #
+        print_err('tracks dir was missing but now exists, drag songs in the dir and '
+                  'restart the program', 2)
         sys.exit(1)
 
     # Iterate through files in tracks directory #
-    [tracks.append(file.name) for file in os.scandir(track_path) if file.name.endswith(track_type)]
-
-    # Clear the display #
-    os.system(cmd)
+    [tracks.append(file.name) for file in os.scandir(str(track_path.resolve()))
+     if file.name.endswith(track_type)]
 
     # Display the menu #
     display()
@@ -280,7 +287,7 @@ def main():
     # Create the keystroke listener thread #
     KEY_LISTENER = Listener(on_press=on_press)
     # Create the media player thread #
-    player = Thread(target=media_player, args=(tracks, track_path, cmd))
+    player = Thread(target=media_player, args=(tracks, track_path))
 
     try:
         # Start and join the threads #
@@ -291,11 +298,11 @@ def main():
 
     # If ctrl + c detected #
     except KeyboardInterrupt:
-        print('\nCtrl + C detected .. exiting')
+        print('\n[!] Ctrl + C detected .. exiting')
 
     # If unknown exception occurs #
     except Exception as err:
-        print_err(f'Unknown exception occurred {err}', 4, cmd)
+        print_err(f'Unknown exception occurred {err}', 2)
         ret = 2
 
     finally:

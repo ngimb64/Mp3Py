@@ -1,17 +1,17 @@
-# Mp3Py
+<div align="center" style="font-family: monospace">
+<h1>Mp3Py</h1>
+&#9745;&#65039; Bandit verified &nbsp;|&nbsp; &#9745;&#65039; Synk verified &nbsp;|&nbsp; &#9745;&#65039; Pylint verified 9.53/10
+</div><br>
+
 ![alt text](https://github.com/ngimb64/Mp3Py/blob/main/mp3_Py.png?raw=true)
 ![alt text](https://github.com/ngimb64/Mp3Py/blob/main/mp3Py.png?raw=true)
-
-&#9745;&#65039; Bandit verified<br>
-&#9745;&#65039; Synk verified<br>
-&#9745;&#65039; Pylint verified 9.37/10
-
-## Prereqs
-Program runs on Windows 10 and Debian-based Linux, written in Python 3.8 and updated to version 3.10.6
 
 ## Purpose
 This program is a command line based mp3 player that uses a listener to detect keystrokes.
 The arrow keys are tied to this listener with static boolean flags used to control execution.
+
+## Prereqs
+Program runs on Windows 10 and Debian-based Linux, written in Python 3.8 and updated to version 3.10.6
 
 ## Installation
 - Run the setup.py script to build a virtual environment and install all external packages in the created venv.

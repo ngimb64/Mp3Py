@@ -1,4 +1,4 @@
-# pylint: disable=W0106
+# pylint: disable=W0106,E0401
 """ Built-in modules """
 import os
 import sys
@@ -17,6 +17,14 @@ from pynput.keyboard import Key, Listener
 global KEY_LISTENER
 PAUSE, NXT, VOL, HALT = False, False, False, False
 STOP = -1
+# If the OS is Windows #
+if os.name == 'nt':
+    # Shell-escape command syntax #
+    CMD = quote('cls')
+# If the OS is Linux #
+else:
+    # Shell-escape command syntax #
+    CMD = quote('clear')
 
 
 def display_wrapper(func):
@@ -35,20 +43,9 @@ def display_wrapper(func):
         """
         # Execute the passed in function with whatever args #
         ret = func(*args, **kwargs)
-
-        # If the OS is Windows #
-        if os.name == 'nt':
-            # Shell-escape command syntax #
-            cmd = quote('cls')
-        # If the OS is Linux #
-        else:
-            # Shell-escape command syntax #
-            cmd = quote('clear')
-
         # Clear the display and re-display the main menu #
-        os.system(cmd)
+        os.system(CMD)
         display()
-
         # If there is a return value #
         if ret:
             return ret
@@ -157,7 +154,7 @@ def media_player(tracks: list, path: Path):
             track_file = path / track
 
             # Play the current iteration of the track list #
-            play_current_track(str(track_file.resolve()), volume)
+            play_current_track(str(track_file), volume)
 
             # While the track is playing and the nxt & exit toggles are False #
             while mixer.music.get_pos() != STOP and not NXT and not HALT:
@@ -216,19 +213,22 @@ def on_press(key) -> bool:
         return PAUSE
 
     # If right arrow key is pressed #
-    elif key == Key.right:
+    if key == Key.right:
         NXT = True
         return NXT
 
     # If up arrow key is pressed #
-    elif key == Key.up:
+    if key == Key.up:
         VOL = True
         return VOL
 
     # If down arrow key is pressed #
-    elif key == Key.down:
+    if key == Key.down:
         HALT = True
         return HALT
+
+    # For pylint return all or none rule #
+    return None
 
 
 def display():
@@ -263,7 +263,7 @@ def main():
     ret = 0
     tracks = []
     # Get current working directory #
-    cwd = Path('.')
+    cwd = Path.cwd()
     track_path = cwd / 'tracks'
     # Set tuple of audio file extension types and command syntax #
     track_type = ('.mp3', '.mp4', '.wav', '.wma', '.m4a', '.flac')
@@ -278,9 +278,7 @@ def main():
         sys.exit(1)
 
     # Iterate through files in tracks directory #
-    [tracks.append(file.name) for file in os.scandir(str(track_path.resolve()))
-     if file.name.endswith(track_type)]
-
+    [tracks.append(file.name) for file in os.scandir(track_path) if file.name.endswith(track_type)]
     # Display the menu #
     display()
 

@@ -10,6 +10,12 @@
 This program is a command line based mp3 player that uses a listener to detect keystrokes.
 The arrow keys are tied to this listener with static boolean flags used to control execution.
 
+### License
+The program is licensed under [GNU Public License v3.0](LICENSE.md)
+
+### Contributions or Issues
+[CONTRIBUTING](CONTRIBUTING.md)
+
 ## Prereqs
 Program runs on Windows 10 and Debian-based Linux, written in Python 3.8 and updated to version 3.10.6
 
